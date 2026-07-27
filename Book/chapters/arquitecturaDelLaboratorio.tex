@@ -1,0 +1,210 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Capítulo 4. Arquitectura del laboratorio
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Arquitectura del laboratorio}
+\label{cha:arquitectura-laboratorio}
+
+\section{Introducción}
+\label{sec:introduccion-arquitectura-laboratorio}
+
+
+\section{Visión general del laboratorio}
+\label{sec:vision-general-laboratorio}
+
+\subsection{Objetivo de la arquitectura}
+\label{subsec:objetivo-arquitectura}
+
+\subsection{Enfoque por fases: fase simulada y fase real}
+\label{subsec:enfoque-fases-simulada-real}
+
+\subsection{Máquina host}
+\label{subsec:maquina-host}
+
+\subsection{Red Docker del entorno}
+\label{subsec:red-docker-entorno}
+
+\subsection{Contenedores del laboratorio}
+\label{subsec:contenedores-laboratorio}
+
+\subsection{Volúmenes compartidos}
+\label{subsec:volumenes-compartidos}
+
+\subsection{Servicios expuestos}
+\label{subsec:servicios-expuestos}
+
+\subsection{Flujo general de comunicación}
+\label{subsec:flujo-general-comunicacion}
+
+
+\section{Arquitectura funcional}
+\label{sec:arquitectura-funcional}
+
+\subsection{Plano EasyMesh}
+\label{subsec:plano-easymesh}
+
+\subsection{Plano IEEE 1905.1}
+\label{subsec:plano-ieee-1905-1}
+
+\subsection{Plano TR-181}
+\label{subsec:plano-tr-181}
+
+\subsection{Plano TR-069/ACS}
+\label{subsec:plano-tr-069-acs}
+
+\subsection{Plano Prometheus/Grafana}
+\label{subsec:plano-prometheus-grafana}
+
+\subsection{Plano de captura y evidencias}
+\label{subsec:plano-captura-evidencias}
+
+
+\section{Arquitectura tecnológica del laboratorio}
+\label{sec:arquitectura-tecnologica-laboratorio}
+
+\subsection{Docker y Docker Compose}
+\label{subsec:docker-docker-compose}
+
+\subsection{Simulador EasyMesh}
+\label{subsec:simulador-easymesh}
+
+\subsection{tr069-sim como CPE virtual}
+\label{subsec:tr069-sim-cpe-virtual}
+
+\subsection{GenieACS como servidor ACS}
+\label{subsec:genieacs-servidor-acs}
+
+\subsection{MongoDB y Redis como servicios de soporte}
+\label{subsec:mongodb-redis-servicios-soporte}
+
+\subsection{Prometheus como sistema de recolección de métricas}
+\label{subsec:prometheus-recoleccion-metricas}
+
+\subsection{Grafana como sistema de visualización}
+\label{subsec:grafana-sistema-visualizacion}
+
+\subsection{tcpdump y Wireshark para captura y análisis de tráfico}
+\label{subsec:tcpdump-wireshark-captura-analisis}
+
+\subsection{PowerShell, Git, GitHub y scripts de automatización}
+\label{subsec:powershell-git-github-scripts}
+
+
+\section{Arquitectura de la fase simulada}
+\label{sec:arquitectura-fase-simulada}
+
+\subsection{Función del simulador EasyMesh}
+\label{subsec:funcion-simulador-easymesh}
+
+\subsection{API HTTP del simulador}
+\label{subsec:api-http-simulador}
+
+\subsection{Generación de escenarios}
+\label{subsec:generacion-escenarios}
+
+\subsection{Generación de métricas}
+\label{subsec:generacion-metricas}
+
+\subsection{Generación de CSV TR-181}
+\label{subsec:generacion-csv-tr181}
+
+\subsection{Lectura del modelo TR-181 mediante tr069-sim}
+\label{subsec:lectura-modelo-tr181-tr069-sim}
+
+\subsection{Comunicación del CPE virtual con GenieACS mediante TR-069}
+\label{subsec:comunicacion-cpe-virtual-genieacs-tr069}
+
+\subsection{Gestión de dispositivos desde la interfaz web de GenieACS}
+\label{subsec:gestion-dispositivos-interfaz-web-genieacs}
+
+\subsection{Uso de la API NBI de GenieACS}
+\label{subsec:uso-api-nbi-genieacs}
+
+\subsection{Almacenamiento de información mediante MongoDB y Redis}
+\label{subsec:almacenamiento-mongodb-redis}
+
+
+\section{Monitorización y visualización de métricas}
+\label{sec:monitorizacion-visualizacion-metricas}
+
+\subsection{Scraping de métricas con Prometheus}
+\label{subsec:scraping-metricas-prometheus}
+
+\subsection{Targets de monitorización}
+\label{subsec:targets-monitorizacion}
+
+\subsection{Consultas PromQL}
+\label{subsec:consultas-promql}
+
+\subsection{Datasource Prometheus en Grafana}
+\label{subsec:datasource-prometheus-grafana}
+
+\subsection{Dashboards técnicos}
+\label{subsec:dashboards-tecnicos}
+
+\subsection{Dashboards de observabilidad de usuario}
+\label{subsec:dashboards-observabilidad-usuario}
+
+\subsection{Visualización de KPIs técnicos y de experiencia de cliente}
+\label{subsec:visualizacion-kpis-tecnicos-experiencia-cliente}
+
+
+\section{Captura de tráfico y generación de evidencias}
+\label{sec:captura-trafico-generacion-evidencias}
+
+\subsection{Captura de tráfico TR-069}
+\label{subsec:captura-trafico-tr069}
+
+\subsection{Análisis de sesiones CWMP}
+\label{subsec:analisis-sesiones-cwmp}
+
+\subsection{Uso de tcpdump}
+\label{subsec:uso-tcpdump}
+
+\subsection{Uso de Wireshark}
+\label{subsec:uso-wireshark}
+
+\subsection{Evidencias PCAP}
+\label{subsec:evidencias-pcap}
+
+\subsection{Trazabilidad de pruebas y resultados}
+\label{subsec:trazabilidad-pruebas-resultados}
+
+
+\section{Arquitectura prevista de la fase real}
+\label{sec:arquitectura-prevista-fase-real}
+
+\subsection{Router gateway EasyMesh}
+\label{subsec:router-gateway-easymesh}
+
+\subsection{Satélites EasyMesh}
+\label{subsec:satelites-easymesh}
+
+\subsection{Clientes WiFi reales}
+\label{subsec:clientes-wifi-reales}
+
+\subsection{ACS real o GenieACS}
+\label{subsec:acs-real-o-genieacs}
+
+\subsection{Endpoint de recolección BulkData}
+\label{subsec:endpoint-recoleccion-bulkdata}
+
+\subsection{Adaptación de las métricas simuladas al entorno real}
+\label{subsec:adaptacion-metricas-simuladas-entorno-real}
+
+\subsection{Captura de tráfico en entorno real}
+\label{subsec:captura-trafico-entorno-real}
+
+
+\section{Relación entre la fase simulada y la fase real}
+\label{sec:relacion-fase-simulada-fase-real}
+
+
+\section{Justificación de diseño}
+\label{sec:justificacion-diseno}
+
+
+\section{Limitaciones de la arquitectura actual}
+\label{sec:limitaciones-arquitectura-actual}

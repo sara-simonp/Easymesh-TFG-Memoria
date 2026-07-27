@@ -1,0 +1,345 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{latexdiff}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://www.ctan.org/pkg/latexdiff} [Último acceso 22/enero/2021]}
+      \field{title}{Página de \texttt{latexdiff} en CTAN}
+    \endentry
+    \entry{git-latexdiff}{misc}{}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{https://gitorious.org/git-latexdiff} [Último acceso 22/enero/2021]}
+      \field{title}{Página de \texttt{git-latexdiff} en gitorious}
+    \endentry
+    \entry{texis}{misc}{}{}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://gaia.fdi.ucm.es/projects/texis/} [Último acceso 1/enero/2021]}
+      \field{title}{TeXiS: Una plantilla de LaTeX para Tesis y otros documentos}
+    \endentry
+    \entry{gelbart02}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=b2959c36151509fa9f06ffb1dc033bdc}{%
+           family={Gelbart},
+           familyi={G\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+        {{hash=ce9079188e489a18acb728cdffe67973}{%
+           family={Morgan},
+           familyi={M\bibinitperiod},
+           given={Nelson},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{fullhash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{fullhashraw}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{bibnamehash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{authorbibnamehash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{authornamehash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{authorfullhash}{8bc6b604d0386da3e0c786409fbe8f72}
+      \strng{authorfullhashraw}{8bc6b604d0386da3e0c786409fbe8f72}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Conference on Spoken Language Processing (ICSLP)}
+      \field{title}{Double the Trouble: Handling Noise and Reverberation in Far-Field Automatic Speech Recognition}
+      \field{year}{2002}
+    \endentry
+    \entry{kochkin02}{report}{}{}
+      \name{author}{2}{}{%
+        {{hash=82bbd03073849f8b6b4d3ef9f83eb505}{%
+           family={Kochkin},
+           familyi={K\bibinitperiod},
+           given={Sergei},
+           giveni={S\bibinitperiod}}}%
+        {{hash=01e7b6ed370041b3d3214c5258660788}{%
+           family={Wickstrom},
+           familyi={W\bibinitperiod},
+           given={Tim},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {EMKAY, a division of Knowles Electronics}%
+      }
+      \strng{namehash}{c480b814fae1245dd830fe39163782b2}
+      \strng{fullhash}{c480b814fae1245dd830fe39163782b2}
+      \strng{fullhashraw}{c480b814fae1245dd830fe39163782b2}
+      \strng{bibnamehash}{c480b814fae1245dd830fe39163782b2}
+      \strng{authorbibnamehash}{c480b814fae1245dd830fe39163782b2}
+      \strng{authornamehash}{c480b814fae1245dd830fe39163782b2}
+      \strng{authorfullhash}{c480b814fae1245dd830fe39163782b2}
+      \strng{authorfullhashraw}{c480b814fae1245dd830fe39163782b2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Headsets, Far Field and Handheld Microphones: Their Impact on Continuous Speech Recognition}
+      \field{type}{techreport}
+      \field{year}{2002}
+    \endentry
+    \entry{seltzer03}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{hash=57e3d899218bce9cfe05fae5fadb5f32}{%
+           family={Seltzer},
+           familyi={S\bibinitperiod},
+           given={Michael\bibnamedelima L.},
+           giveni={M\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Carnegie Mellon University}%
+      }
+      \strng{namehash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{fullhash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{fullhashraw}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{bibnamehash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{authorbibnamehash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{authornamehash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{authorfullhash}{57e3d899218bce9cfe05fae5fadb5f32}
+      \strng{authorfullhashraw}{57e3d899218bce9cfe05fae5fadb5f32}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Microphone Array Processing for Robust Speech Recognition}
+      \field{type}{phdthesis}
+      \field{year}{2003}
+    \endentry
+    \entry{herbordt05}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=205288ee5507b8cd1efb810553e96345}{%
+           family={Herbordt},
+           familyi={H\bibinitperiod},
+           given={Wolfgang},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer, Heidelberg, Germany}%
+      }
+      \strng{namehash}{205288ee5507b8cd1efb810553e96345}
+      \strng{fullhash}{205288ee5507b8cd1efb810553e96345}
+      \strng{fullhashraw}{205288ee5507b8cd1efb810553e96345}
+      \strng{bibnamehash}{205288ee5507b8cd1efb810553e96345}
+      \strng{authorbibnamehash}{205288ee5507b8cd1efb810553e96345}
+      \strng{authornamehash}{205288ee5507b8cd1efb810553e96345}
+      \strng{authorfullhash}{205288ee5507b8cd1efb810553e96345}
+      \strng{authorfullhashraw}{205288ee5507b8cd1efb810553e96345}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{3}
+      \field{title}{Sound capture for human/machine interfaces - Practical aspects of microphone array signal processing}
+      \field{year}{2005}
+    \endentry
+    \entry{moore2002}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=cd915ba418a0847ce3bcc6c8adb8d594}{%
+           family={Moore},
+           familyi={M\bibinitperiod},
+           given={Darren\bibnamedelima C.},
+           giveni={D\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {IDIAP Research Institute, Switzerland}%
+      }
+      \strng{namehash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{fullhash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{fullhashraw}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{bibnamehash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{authorbibnamehash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{authornamehash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{authorfullhash}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \strng{authorfullhashraw}{cd915ba418a0847ce3bcc6c8adb8d594}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{title}{The IDIAP Smart Meeting Room}
+      \field{type}{techreport}
+      \field{year}{2004}
+    \endentry
+    \entry{armani03}{inproceedings}{}{}
+      \name{author}{4}{}{%
+        {{hash=61401f6c9a80ae3c8244bc610bf54c87}{%
+           family={Armani},
+           familyi={A\bibinitperiod},
+           given={Luca},
+           giveni={L\bibinitperiod}}}%
+        {{hash=7c481c9fa52dbd24e8ded8dbb342e01d}{%
+           family={Matassoni},
+           familyi={M\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4a6f491cc56bccd25bc706b7425a93a3}{%
+           family={Omologo},
+           familyi={O\bibinitperiod},
+           given={Maurizio},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e33959fe5fb6e1f85aae40955a09a576}{%
+           family={Svaizer},
+           familyi={S\bibinitperiod},
+           given={Piergiorgio},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{f02d5e9e80e1dab2ea5cb783593c776a}
+      \strng{fullhash}{6d311119a15e9fe2d7b33b4577521748}
+      \strng{fullhashraw}{6d311119a15e9fe2d7b33b4577521748}
+      \strng{bibnamehash}{6d311119a15e9fe2d7b33b4577521748}
+      \strng{authorbibnamehash}{6d311119a15e9fe2d7b33b4577521748}
+      \strng{authornamehash}{f02d5e9e80e1dab2ea5cb783593c776a}
+      \strng{authorfullhash}{6d311119a15e9fe2d7b33b4577521748}
+      \strng{authorfullhashraw}{6d311119a15e9fe2d7b33b4577521748}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{European Conference on Speech Communication and Technology}
+      \field{title}{Use of a CSP-based voice activity detector for distant-talking ASR}
+      \field{year}{2003}
+      \field{pages}{501\bibrangedash 504}
+      \range{pages}{4}
+    \endentry
+    \entry{monasterio2022}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=db660c9efe5904ce155f598d5eeb02bf}{%
+           family={Monasterio-Exposito},
+           familyi={M\bibinithyphendelim E\bibinitperiod},
+           given={Leticia},
+           giveni={L\bibinitperiod}}}%
+        {{hash=688214d07bf58f2c70a1687eb96b152c}{%
+           family={Pizarro},
+           familyi={P\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=da7e2e93106543998c55fdde339f7460}{%
+           family={Macias-Guarasa},
+           familyi={M\bibinithyphendelim G\bibinitperiod},
+           given={Javier},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{735fcbfaafccc117ef45aa83b92bbc57}
+      \strng{fullhash}{601185ab803c7c239242d578aebd95a3}
+      \strng{fullhashraw}{601185ab803c7c239242d578aebd95a3}
+      \strng{bibnamehash}{601185ab803c7c239242d578aebd95a3}
+      \strng{authorbibnamehash}{601185ab803c7c239242d578aebd95a3}
+      \strng{authornamehash}{735fcbfaafccc117ef45aa83b92bbc57}
+      \strng{authorfullhash}{601185ab803c7c239242d578aebd95a3}
+      \strng{authorfullhashraw}{601185ab803c7c239242d578aebd95a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Access}
+      \field{title}{Label Augmentation to Improve Generalization of Deep Learning Semantic Segmentation of Laparoscopic Images}
+      \field{volume}{10}
+      \field{year}{2022}
+      \field{pages}{37345\bibrangedash 37359}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1109/ACCESS.2022.3162630
+      \endverb
+    \endentry
+    \entry{gnulinux}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://es.wikipedia.org/wiki/GNU/Linux} [Último acceso 4/mayo/2021]}
+      \field{title}{Información sobre GNU/Linux en wikipedia}
+    \endentry
+    \entry{emacs}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://savannah.gnu.org/projects/emacs/} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación emacs}
+    \endentry
+    \entry{kdevelop}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://www.kdevelop.org} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación KDevelop}
+    \endentry
+    \entry{lamport94}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=5d77435450d10a850a5b58577b9a456b}{%
+           family={Lamport},
+           familyi={L\bibinitperiod},
+           given={Leslie},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison Wesley Professional}%
+      }
+      \strng{namehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{fullhash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{fullhashraw}{5d77435450d10a850a5b58577b9a456b}
+      \strng{bibnamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorbibnamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authornamehash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorfullhash}{5d77435450d10a850a5b58577b9a456b}
+      \strng{authorfullhashraw}{5d77435450d10a850a5b58577b9a456b}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{LaTeX: A Document Preparation System, 2nd edition}
+      \field{year}{1994}
+    \endentry
+    \entry{octave}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://www.octave.org} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación Octave}
+    \endentry
+    \entry{cvs}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://savannah.nongnu.org/projects/cvs/} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación CVS}
+    \endentry
+    \entry{gcc}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://savannah.gnu.org/projects/gcc/} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación gcc}
+    \endentry
+    \entry{make}{misc}{}{}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{note}{\url{http://savannah.gnu.org/projects/make/} [Último acceso 4/mayo/2021]}
+      \field{title}{Página de la aplicación make}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

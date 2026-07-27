@@ -1,0 +1,548 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Capítulo 1. Introducción
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Introducción}
+\label{cha:introduccion}
+
+\epigraph{
+    \textit{«Cuando puedes medir aquello de lo que hablas y expresarlo
+    en números, sabes algo sobre ello.»}
+}{
+    William Thomson, Lord Kelvin\\
+    \textit{Electrical Units of Measurement}, 1883
+}
+
+\section{Contexto del proyecto}
+\label{sec:contexto-proyecto}
+
+En las redes de acceso residencial, la calidad percibida por el usuario no depende exclusivamente del enlace de acceso que comunica el domicilio con la infraestructura del proveedor de servicios de Internet. Aunque la conexión WAN determina la capacidad disponible entre la red del operador y el equipo instalado en la residencia del cliente, una parte significativa de la experiencia final está condicionada por la red interna del domicilio y, en particular, por el segmento inalámbrico empleado para conectar los dispositivos de usuario.
+
+La red Wi-Fi residencial constituye el último tramo de la comunicación entre el servicio contratado y los terminales desde los que se consume dicho servicio. En este segmento pueden producirse degradaciones asociadas a la distancia respecto al punto de acceso, la presencia de obstáculos físicos, la propagación multitrayecto, las interferencias procedentes de redes próximas, la ocupación del canal, la banda de frecuencia utilizada o la carga soportada por los equipos. Estas condiciones dependen de las características particulares de cada domicilio y pueden provocar una reducción del caudal disponible, un incremento de la latencia, variaciones en el tiempo de respuesta o interrupciones temporales de la conectividad.
+
+Desde la perspectiva del usuario, estas degradaciones se manifiestan como problemas en aplicaciones de navegación, reproducción multimedia, videoconferencia, videojuegos en línea o transferencia de datos. Sin embargo, su origen no se encuentra necesariamente en la red del operador ni en el enlace de acceso. Una conexión WAN puede permanecer operativa y disponer de capacidad suficiente mientras el terminal presenta una experiencia deficiente debido a las condiciones del enlace inalámbrico dentro de la vivienda. Esta circunstancia dificulta el diagnóstico remoto y puede generar incidencias, reclamaciones y actuaciones de soporte basadas en una visibilidad parcial del servicio.
+
+En una instalación residencial convencional, la monitorización remota se concentra habitualmente en el equipo de cliente o CPE (\textit{Customer Premises Equipment}). Este dispositivo actúa como punto de terminación de la red del operador y proporciona funciones de encaminamiento, conectividad inalámbrica y gestión de la red local. Para administrar este tipo de equipos se emplean mecanismos como TR-069, también denominado CWMP (\textit{CPE WAN Management Protocol}), que define la comunicación entre el CPE y un servidor de autoconfiguración o ACS (\textit{Auto Configuration Server}). De forma complementaria, el modelo de datos TR-181 proporciona una estructura jerárquica para representar parámetros de configuración, estado y telemetría del dispositivo \cite{bbf_tr069,bbf_tr181}.
+
+La evolución hacia arquitecturas Wi-Fi distribuidas complica esta monitorización. Cuando la cobertura se amplía mediante varios puntos de acceso coordinados, el terminal puede asociarse a un nodo secundario, por lo que la información necesaria para evaluar su conexión deja de estar concentrada exclusivamente en el nodo principal.
+
+Las arquitecturas Wi-Fi Mesh permiten ampliar la cobertura mediante la cooperación de varios nodos que presentan al usuario una única red lógica. Dentro de este ámbito, Wi-Fi EasyMesh define una arquitectura Multi-AP formada por un controlador y uno o varios agentes. El controlador coordina la topología y las funciones de gestión, mientras que los agentes proporcionan conectividad inalámbrica en diferentes ubicaciones del domicilio. Los clientes pueden asociarse a cualquiera de estos nodos y cambiar entre ellos mediante procesos de \textit{roaming} o \textit{client steering} \cite{Wi-Fi_alliance_easymesh}.
+
+La Figura~\ref{fig:contexto-easymesh} representa de forma simplificada la relación entre el acceso proporcionado por el operador, el controlador EasyMesh, los agentes distribuidos en el domicilio y el terminal móvil. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.90\textwidth]
+    {contexto_red_residencial_easymesh.png}
+    \caption{Contexto de una red residencial basada en EasyMesh. El
+    controlador y los agentes proporcionan cobertura inalámbrica al
+    terminal móvil, mientras que la plataforma de gestión obtiene
+    información del CPE mediante los mecanismos de gestión remota.}
+    \label{fig:contexto-easymesh}
+\end{figure}
+
+La incorporación de agentes amplía la cobertura, pero distribuye entre varios nodos la información necesaria para evaluar la conexión de los terminales. Por ello, resulta necesario identificar el nodo al que se encuentra asociado cada cliente, detectar sus cambios de asociación y correlacionar temporalmente las métricas obtenidas.
+
+El presente Trabajo Fin de Grado aborda el diseño, implementación y validación de una plataforma de monitorización orientada a redes Wi-Fi EasyMesh. El trabajo combina una fase simulada, destinada a validar de forma controlada la arquitectura de adquisición y los modelos de datos, con una fase experimental basada en dispositivos EasyMesh reales. La solución desarrollada permite recolectar telemetría mediante TR-069 y TR-181, transformar los parámetros obtenidos en métricas temporales, representar su evolución y analizar el comportamiento de un cliente móvil cuando se encuentra asociado al controlador o a los diferentes agentes de la red.
+
+\section{Motivación y marco de desarrollo del proyecto}
+\label{sec:motivacion-marco}
+
+La motivación principal del proyecto surge de la necesidad de mejorar la capacidad de observación y diagnóstico de las redes Wi-Fi residenciales. Cuando un usuario experimenta lentitud, interrupciones o una degradación en determinadas aplicaciones, la causa del problema no se encuentra necesariamente en el enlace de acceso proporcionado por el operador. El origen puede encontrarse en las condiciones radioeléctricas, la carga de la red, el enlace de \textit{backhaul}, el nodo que atiende al terminal o el propio dispositivo.
+
+La ausencia de información suficientemente detallada sobre estos elementos dificulta la identificación del origen de una incidencia. Una comprobación limitada al estado general del CPE o a la disponibilidad del enlace WAN puede indicar un funcionamiento aparentemente correcto, mientras que el cliente continúa experimentando una calidad de experiencia deficiente. Esta diferencia entre el estado observado desde la red del operador y la experiencia percibida desde el terminal constituye uno de los principales retos de la gestión de redes residenciales.
+
+El problema adquiere una mayor relevancia en redes EasyMesh. En estas arquitecturas, la conectividad inalámbrica se distribuye entre un controlador y uno o varios agentes, por lo que el cliente puede estar asociado a un nodo diferente del equipo principal. Además, durante un desplazamiento dentro del domicilio, el dispositivo cliente puede cambiar de punto de acceso sin abandonar la red lógica. En consecuencia, la plataforma de gestión debe ser capaz de mantener la relación entre el cliente, el nodo que le proporciona servicio y las métricas obtenidas en cada instante.
+
+Una de las motivaciones fundamentales del trabajo es la definición de un catálogo de indicadores de servicio aplicable a redes EasyMesh. Dicho catálogo no se limita a enumerar parámetros disponibles, sino que relaciona cada indicador con su fuente, su ubicación dentro del modelo de datos, su unidad, su periodicidad de adquisición, el procesamiento necesario y las limitaciones identificadas durante las pruebas. Esta clasificación permite distinguir entre métricas obtenidas directamente del dispositivo e indicadores que deben calcularse mediante correlación temporal, análisis estadístico o pruebas activas.
+
+El proyecto se encuentra enmarcado en el ámbito de la observabilidad de redes de telecomunicaciones y está inspirado en una problemática identificada por DATADOPE S.~L.. La pérdida de visibilidad sobre los dispositivos conectados a nodos secundarios constituye un problema de interés para los proveedores de servicios de Internet, debido a que limita la capacidad de diagnóstico y dificulta la asociación entre el estado técnico de la red y la experiencia del cliente.
+
+Desde el punto de vista académico y tecnológico, el trabajo integra conocimientos de redes de computadores, protocolos de gestión, virtualización, adquisición de telemetría, tratamiento de datos, automatización y sistemas de monitorización. Su desarrollo requiere comprender tanto el funcionamiento de EasyMesh y de los modelos de datos implementados por los equipos como la cadena seguida por la información desde su adquisición hasta su almacenamiento, procesamiento y representación.
+
+El desarrollo del proyecto se estructuró inicialmente en una fase simulada, destinada a validar la arquitectura, el intercambio de información y la representación de escenarios controlados. Posteriormente, el laboratorio se amplió mediante dispositivos EasyMesh reales, lo que permitió analizar el modelo de datos proporcionado por los equipos, observar la asociación de un terminal móvil a los distintos nodos y evaluar el comportamiento de la plataforma durante pruebas estacionarias, desplazamientos y operaciones de \textit{roaming}
+
+La elección de una arquitectura basada principalmente en herramientas de código abierto responde a la necesidad de construir un entorno reproducible, extensible y que pueda adaptarse a otros equipos y topologías. 
+
+La contribución principal consiste en diseñar y validar una metodología completa para adquirir, correlacionar e interpretar información de una red EasyMesh, manteniendo la trazabilidad del cliente y relacionando los indicadores técnicos de calidad de servicio con la experiencia observada desde el terminal.
+
+\section{Planteamiento del problema}
+\label{sec:planteamiento-problema}
+La gestión remota de una red residencial requiere disponer de información actualizada sobre el estado de los equipos, las interfaces inalámbricas y los terminales conectados. En una arquitectura convencional formada por un único punto de acceso, la relación entre el CPE y los dispositivos de usuario puede obtenerse mediante las tablas de asociación y los parámetros de estado expuestos por el propio equipo. Sin embargo, esta relación resulta más compleja cuando la cobertura inalámbrica se distribuye entre varios nodos coordinados mediante EasyMesh.
+
+En una red Mesh, el nodo principal continúa actuando como punto de gestión y acceso a la red del operador, pero no necesariamente proporciona de forma directa la conectividad inalámbrica a todos los terminales. Un dispositivo puede asociarse a un agente secundario y enviar su tráfico a través de uno o varios enlaces de \textit{backhaul} antes de alcanzar el controlador. Como consecuencia, la información necesaria para caracterizar el servicio puede quedar distribuida entre diferentes puntos de acceso y nodos de la topología.
+
+El problema abordado en este trabajo no consiste únicamente en obtener parámetros del CPE, sino mantener la trazabilidad del cliente dentro de una infraestructura distribuida. Para ello es necesario identificar el dispositivo, determinar el nodo EasyMesh que lo atiende y correlacionar los cambios de asociación con las métricas registradas durante un intervalo temporal. A su vez, debe comprobarse la antigüedad de la telemetría, ya que un valor correctamente adquirido puede representar un estado que ya no se encuentra vigente.
+
+Los parámetros técnicos de la red no describen por sí solos la experiencia obtenida por el usuario. Por este motivo, el planteamiento incluye tanto la adquisición de indicadores de calidad de servicio como la realización de medidas activas desde el terminal final. Esta combinación permite estudiar la relación entre el estado observado en la infraestructura y el comportamiento experimentado por el usuario.
+
+\subsection{El punto ciego de visibilidad en redes Mesh}
+\label{subsec:punto-ciego-mesh}
+En una red residencial gestionada mediante TR-069, el operador obtiene la información disponible a través del CPE registrado en el ACS. Esta información puede incluir parámetros de identificación, estado de las radios, configuración de los puntos de acceso, clientes asociados y contadores de tráfico. En una red formada por un único punto de acceso, la asociación entre el cliente y el equipo gestionado resulta directa.
+
+La introducción de agentes EasyMesh modifica este escenario. El dispositivo puede recibir conectividad desde un agente situado en otra zona del domicilio, mientras que el controlador continúa siendo el elemento principal registrado en la plataforma de gestión. Si la información expuesta por el controlador no representa correctamente la topología completa, el ACS puede disponer de una visión parcial del servicio.
+
+Este fenómeno constituye el punto ciego de visibilidad abordado en el proyecto. La conexión física del cliente puede mantenerse operativa y el terminal puede continuar accediendo a la red, aunque la plataforma de monitorización no identifique correctamente el agente que le proporciona servicio o conserve una asociación correspondiente a un estado anterior. En este caso, la conectividad existe, pero la visibilidad lógica se encuentra degradada.
+
+La existencia de este punto ciego dificulta el diagnóstico de incidencias. Una degradación puede estar relacionada con la radio del agente, con la calidad de su enlace de \textit{backhaul}, con la utilización del canal o con el enlace entre el cliente y el punto de acceso. Si la plataforma únicamente observa el estado general del controlador, no dispone de información suficiente para diferenciar estas posibles causas.
+
+El modelo TR-181 proporciona estructuras para representar la configuración y la telemetría del dispositivo, incluyendo objetos relacionados con Wi-Fi y con la topología Multi-AP. No obstante, la disponibilidad real de estos parámetros depende de la implementación del fabricante y de la versión de firmware utilizada. Además, la existencia de un parámetro dentro del árbol no garantiza que su valor se actualice con la frecuencia necesaria para observar eventos de corta duración \cite{bbf_tr181}.
+
+La reducción del punto ciego requiere, por tanto, validar los parámetros disponibles, determinar cuáles representan de forma fiable la asociación del terminal y establecer un mecanismo de adquisición que permita obtener información suficientemente reciente.
+
+La Figura~\ref{fig:punto-ciego-mesh} representa el punto ciego que puede producirse cuando el cliente se asocia a un agente secundario, mientras que la plataforma de gestión mantiene una visión centrada únicamente en el nodo principal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]
+    {punto_ciego_visibilidad_mesh.png}
+    \caption{Punto ciego de visibilidad en una red EasyMesh. Aunque el
+    cliente mantiene la conectividad a través de un agente secundario,
+    una plataforma centrada únicamente en el controlador puede perder la
+    trazabilidad de su asociación y de las métricas asociadas.}
+    \label{fig:punto-ciego-mesh}
+\end{figure}
+
+\subsection{Roaming y asociación a satélites}
+\label{subsec:roaming-asociacion}
+
+El término \textit{roaming} hace referencia al cambio de asociación de un terminal entre diferentes puntos de acceso pertenecientes a una misma red inalámbrica. En una arquitectura EasyMesh, este proceso puede producirse entre el controlador y un agente o entre dos agentes diferentes. Desde la perspectiva del usuario, la red mantiene el mismo identificador y la conectividad debería continuar con la menor interrupción posible.
+
+El cambio de punto de acceso puede estar condicionada por diferentes factores, entre ellos el nivel de señal recibido, la carga de las radios, la disponibilidad de nodos alternativos y la lógica de \textit{steering} implementada por el sistema. No obstante, la decisión final de asociación también depende del comportamiento del propio terminal, por lo que el cambio observado no está determinado exclusivamente por el controlador EasyMesh.
+
+Desde el punto de vista de la monitorización, el \textit{roaming} introduce un problema temporal. Antes de la transición, el cliente aparece asociado a un nodo de origen y, una vez completada, debe aparecer vinculado al nodo de destino. Entre ambos estados pueden producirse intervalos en los que la información no se haya actualizado, existan observaciones contradictorias o el cliente no responda temporalmente a las pruebas de conectividad.
+
+Los parámetros obtenidos mediante TR-069 y expuestos por el modelo TR-181 no proporciona directamente un parámetro que represente la duración exacta del proceso radio. Este intervalo debe estimarse mediante la correlación entre sucesivas observaciones de la asociación, la disponibilidad del cliente y las métricas registradas durante el desplazamiento. La precisión de la estimación depende de la frecuencia de actualización de la telemetría y de los intervalos de muestreos utilizados por la plataforma.
+
+También debe diferenciarse entre el tiempo físico de transición y el tiempo de observación. El primero corresponde al proceso mediante el cual el dispositivo abandona un punto de acceso y completa su asociación con otro. El segundo incluye los retardos introducidos por la actualización del CPE, la sesión de gestión, la consulta del ACS, la adquisición de métricas y su representación final. Por tanto, el instante mostrado por una plataforma de monitorización no debe interpretarse automáticamente como el instante exacto en el que se produjo el cambio radio.
+
+El objetivo experimental consiste, en reproducir un desplazamiento controlado y comprobar si la plataforma mantiene la trazabilidad del terminal a lo largo de toda la secuencia. Para ello deben registrarse el nodo esperado, el nodo observado, el instante de cada fase, la disponibilidad del dispositivo y las variaciones experimentadas por las métricas de conectividad.
+
+\subsection{Pérdida de trazabilidad de métricas del cliente}
+\label{subsec:perdida-trazabilidad}
+
+La trazabilidad de un cliente consiste en mantener una correspondencia estable entre su identidad y las métricas obtenidas en diferentes instantes y ubicaciones de la red. Esta correspondencia no puede basarse únicamente en la posición que ocupa el dispositivo dentro de una tabla o de una rama del modelo de datos, ya que las instancias numéricas pueden cambiar después de una nueva asociación, un reinicio o una actualización de la topología.
+
+Un mismo cliente puede aparecer representado mediante diferentes atributos, como la dirección MAC, la dirección IP, el nombre de host, la radio utilizada, el punto de acceso o la posición ocupada dentro de una tabla de estaciones. Para relacionar estas representaciones es necesario seleccionar un identificador suficientemente estable y emplear el resto de los campos como información complementaria.
+
+En este trabajo se utiliza la dirección MAC como identificador principal del terminal, debido que permite correlacionar su presencia en las ramas de clientes, hosts y topología EasyMesh. El nombre de host y la dirección IP se emplean como atributos auxiliares, debido a que no se consideran suficientes por sí solos. La dirección IP puede modificarse por el funcionamiento de DHCP, mientras que el nombre de host puede no estar disponible o no ser único.
+
+La pérdida de trazabilidad puede producirse cuando el dispositivo desaparece de la tabla correspondiente al nodo de origen y aparece en una nueva instancia del nodo de destino. Si la plataforma interpreta ambas instancias como terminales diferentes, las series temporales quedan fragmentadas y no es posible reconstruir correctamente el desplazamiento.
+
+Para evitar esta situación, las métricas deben normalizarse mediante etiquetas estables que representen, el identificador del cliente y el nodo EasyMesh asociado. De este modo, los cambios de posición dentro del modelo TR-181 pueden transformarse en una secuencia temporal coherente e independiente de la instancia concreta utilizada por el firmware.
+
+La trazabilidad también requiere considerar la antigüedad de los datos. Un valor técnicamente correcto, pero obtenido varios minutos antes, puede representar una asociación que ya no se encuentra activo. Por tanto, la antigüedad de actualización constituye una parte inseparable de la métrica y debe incluirse dentro del análisis de validez de la telemetría.
+
+\subsection{Necesidad de indicadores de QoE}
+\label{subsec:necesidad-qoe}
+
+Las métricas obtenidas desde el CPE y desde la infraestructura EasyMesh describen características técnicas de la red. Entre ellas pueden encontrarse el estado de las radios, el nivel de señal, las tasas físicas de enlace, los contadores de tráfico, la asociación del cliente o la calidad del \textit{backhaul}. Estos valores permiten caracterizar la calidad de servicio o QoS (\textit{Quality of Service}), pero no representan directamente la experiencia final del usuario.
+
+Una señal elevada o una tasa PHY alta no garantizan que una aplicación obtenga un rendimiento equivalente. El tráfico útil también puede verse afectado por la contención del medio, las retransmisiones, el enlace de \textit{backhaul}, la conexión WAN, la latencia del servidor remoto y las características del propio terminal. Por esta razón, no resulta adecuado interpretar una única métrica de radio como una medida completa de experiencia.
+
+La telemetría de la infraestructura se complementa con pruebas activas ejecutadas desde el terminal móvil. Estas pruebas proporcionan medidas objetivas de rendimiento extremo a extremo, como el caudal de descarga y subida, la latencia, el \textit{jitter} y la pérdida de paquetes. Aunque estas medidas no constituyen por sí solas una evaluación completa de QoE (\textit{Quality of Experience}), pueden emplearse como indicadores objetivos relacionados con la experiencia de uso.
+
+La combinación de QoS y QoE permite construir un análisis más completo. Las métricas EasyMesh describen las condiciones técnicas bajo las que se encuentra conectado el cliente, mientras que las medidas activas representan el resultado observado durante la utilización del servicio. La correlación entre ambos grupos permite estudiar si una degradación de la experiencia coincide con cambios en la asociación, la señal, la capacidad del enlace o la topología de \textit{backhaul}.
+
+No obstante, una prueba hacia Internet también incorpora el comportamiento del acceso WAN, la carga de la red del operador, la ruta utilizada y el servidor de destino. Por tanto, los resultados deben interpretarse como una medida extrema a extremo obtenido bajo unas condiciones concretas y no como una caracterización exclusiva del segmento Wi-Fi.
+
+El problema planteado consiste, en establecer un conjunto de indicadores que permita relacionar la información técnica disponible en la red con la experiencia obtenida por el usuario. Por lo que es necesario definir qué métricas se consideran QoS, cuáles se obtienen mediante pruebas de QoE y qué limitaciones deben tenerse en cuenta al compararlas.
+
+\section{Objetivos del proyecto}
+\label{sec:objetivos-proyecto}
+
+A partir de la problemática descrita en los apartados anteriores, el
+presente Trabajo de Fin de Grado aborda el diseño y validación de una
+solución que permita mejorar la observabilidad de una red Wi-Fi EasyMesh.
+La finalidad del proyecto no se limita a la consulta aislada de
+parámetros del CPE, sino que comprende la identificación, adquisición,
+normalización, almacenamiento, representación e interpretación de la
+telemetría asociada a la red mallada y a los clientes conectados.
+
+Para alcanzar este propósito, se plantea una arquitectura
+de gestión y monitorización, capaz de recibir
+información del equipo, transformarla en métricas temporales y mantener
+la trazabilidad de un cliente móvil cuando se encuentra asociado al
+controlador o a cualquiera de los agentes EasyMesh. Dividiendo los objetivos en generales y un conjunto de objetivos específicos, los cuales delimitan el alcance técnico y experimental del proyecto.
+
+\subsection{Objetivo general}
+\label{subsec:objetivo-general}
+
+El objetivo general del presente Trabajo de Fin de Grado consiste en
+diseñar, implementar y validar una plataforma de monitorización para una
+red Wi-Fi EasyMesh, utilizando TR-069/CWMP como mecanismo de gestión remota y TR-181 como modelo de datos para la adquisición de telemetría.
+
+La plataforma debe permitir recolectar, procesar, almacenar y representar
+la telemetría proporcionada por el CPE, manteniendo la trazabilidad de un
+cliente móvil cuando se encuentra asociado al controlador o a cualquiera
+de los agentes de la red. Asimismo, debe permitir analizar el
+comportamiento del cliente durante escenarios estacionarios y procesos de
+\textit{roaming}, relacionando los indicadores técnicos de calidad de
+servicio con las medidas de calidad de experiencia obtenidas desde el
+terminal.
+
+\subsection{Objetivos específicos}
+\label{subsec:objetivos-especificos}
+
+Para alcanzar el objetivo general se establecen los siguientes objetivos
+específicos:
+
+\begin{enumerate}[
+    label=\arabic*.,
+    leftmargin=1.2cm,
+    itemsep=0.4em,
+    topsep=0.5em
+]
+
+\item \textbf{Definir un catálogo de métricas e indicadores de servicio} que permita caracterizar el funcionamiento de la red EasyMesh y la calidad experimentada por el cliente. Para cada indicador se determinarán su finalidad, fuente de información, procedimiento de obtención, unidad, periodicidad y principales limitaciones. 
+
+\item \textbf{Diseñar y desplegar una arquitectura de laboratorio reproducible} que integre una red EasyMesh, dispositivos cliente y una infraestructura de gestión y monitorización basada en herramientas de código abierto. La arquitectura deberá permitir realizar pruebas controladas tanto sobre un entorno simulado como sobre dispositivos físicos. 
+
+\item \textbf{Integrar los mecanismos de gestión y telemetría TR-069 y TR-181} para obtener información del controlador y de los agentes EasyMesh, identificando los parámetros expuestos por cada nodo y determinando el procedimiento necesario para mantener la asociación entre el cliente y el punto de acceso que le proporciona conectividad. 
+
+\item \textbf{Implementar un flujo automatizado de adquisición, normalización, almacenamiento y visualización de métricas}, capaz de transformar la telemetría obtenida de los dispositivos en series temporales y cuadros de mando orientados al análisis operativo de la red.
+
+\item \textbf{Diseñar y ejecutar escenarios de prueba reproducibles} que permitan validar la arquitectura desarrollada, analizar el comportamiento del cliente cuando se encuentra asociado al controlador o a los agentes y evaluar los cambios producidos durante los procesos de \textit{roaming} o \textit{client steering}. Estas pruebas deberán permitir reproducir el punto ciego de visibilidad, mantener la correlación temporal de las métricas y relacionar los resultados técnicos con la calidad de experiencia del usuario. 
+
+\end{enumerate}
+
+
+\section{Alcance y limitaciones del proyecto}
+\label{sec:alcance-limitaciones}
+
+El alcance del presente Trabajo de Fin de Grado comprende el diseño,
+despliegue y validación de una plataforma de monitorización orientada a
+redes Wi-Fi EasyMesh. La solución desarrollada permite adquirir, normalizar, almacenar, representar y analizar telemetría asociada a la red mallada y a los clientes conectados, con especial atención a la trazabilidad de un terminal móvil cuando cambia su asociación entre el controlador y los agentes.
+
+La fase simulada se empleó para validar de forma controlada la
+arquitectura general del laboratorio, el funcionamiento de los
+componentes de gestión y la representación de diferentes escenarios de
+red. Esta fase permitió verificar la comunicación entre un
+CPE virtual y GenieACS mediante TR-069, así como generar estructuras de
+datos equivalentes a parámetros de una red EasyMesh. También facilitó la
+creación de escenarios reproducibles antes de incorporar los equipos
+físicos.
+
+La fase experimental se desarrolló mediante tres dispositivos TP-Link
+HX141 configurados como un controlador y dos agentes EasyMesh. Los equipos se distribuyeron en diferentes plantas de una vivienda con el fin de reproducir un entorno residencial real. El cliente utilizado durante las pruebas fue un terminal móvil,
+identificado como \texttt{MOVIL\_SARA}, mientras que el ordenador se
+empleó exclusivamente como plataforma de instrumentación, captura,
+almacenamiento y visualización.
+
+La infraestructura de observabilidad se desplegó mediante contenedores Docker e integró GenieACS, una base de
+datos MongoDB, un servicio Redis, un componente de exportación de
+métricas, Prometheus, Grafana y herramientas auxiliares de captura y
+automatización. La comunicación con el CPE real se realiza mediante
+TR-069/CWMP, mientras que la información almacenada en GenieACS se
+consulta a través de su API NBI y se transforma en métricas compatibles
+con Prometheus.
+
+Dentro del alcance funcional se incluyen las siguientes capacidades:
+
+\begin{itemize}
+    \item Diseño y despliegue de un laboratorio reproducible para la monitorización de una red EasyMesh. 
+    \item Registro y gestión del CPE mediante TR-069/CWMP y análisis de los parámetros TR-181 expuestos por el firmware. 
+    \item Identificación del cliente móvil y determinación del nodo EasyMesh al que se encuentra asociado. 
+     \item Implementación de un flujo automatizado de adquisición, normalización, almacenamiento y visualización de métricas. 
+     \item Representación temporal de indicadores relacionados con la asociación, la calidad radio, la capacidad de enlace, la conectividad y la antigüedad de la telemetría. 
+    \item Ejecución de pruebas estacionarias con el cliente asociado al controlador y a cada uno de los agentes. 
+     \item Ejecución de pruebas de movilidad para observar los cambios de asociación y mantener la trazabilidad del cliente durante el \textit{roaming}. 
+     \item Realización de medidas activas de conectividad y calidad de experiencia, junto con la generación de evidencias reproducibles.
+\end{itemize}
+
+El proyecto no comprende la implementación interna del estándar EasyMesh ni la modificación de los algoritmos de selección de punto de acceso, \textit{roaming} o \textit{client steering} utilizados por los equipos. La formación y coordinación de la red mallada dependen de las funciones proporcionadas por el firmware de los dispositivos HX141. La plataforma desarrollada se limita a adquirir, procesar y representar la información que dichos equipos exponen.
+
+Tampoco se pretende obtener una medida de tiempo real estricto. La cadena
+de monitorización incluye varias etapas de adquisición y procesamiento:
+
+\[
+\text{HX141}
+\longrightarrow
+\text{TR-069}
+\longrightarrow
+\text{GenieACS}
+\longrightarrow
+\text{exporter}
+\longrightarrow
+\text{Prometheus}
+\longrightarrow
+\text{Grafana}.
+\]
+
+En consecuencia, las métricas representadas incorporan el retardo
+introducido por el equipo, la sesión CWMP, la consulta a la API, el
+intervalo de \textit{scraping} y la actualización del cuadro de mando.
+
+Otra limitación está relacionada con la dependencia del firmware. La
+disponibilidad, semántica, unidad y frecuencia de actualización de los
+parámetros TR-181 no pueden controlarse desde la plataforma. Algunos
+indicadores previstos inicialmente no fueron expuestos por los equipos,
+no presentaron una actualización suficientemente fiable o utilizaron
+representaciones propietarias no documentadas. En estos casos, los
+valores se trataron como información bruta y no se utilizaron para
+establecer conclusiones que requiriesen una unidad física confirmada.
+
+El mecanismo \texttt{Device.BulkData}, considerado durante el
+planteamiento inicial, no pudo utilizarse de forma operativa con el
+firmware disponible. La adquisición periódica de la fase experimental se
+implementó mediante consultas a la información almacenada en GenieACS y
+el posterior \textit{scraping} del \textit{exporter} por Prometheus.
+BulkData se mantiene como parte del estudio teórico y del diseño
+previsto, pero no se presenta como un mecanismo funcional validado sobre
+los dispositivos reales.
+
+Las medidas activas ejecutadas desde el ordenador hacia el terminal móvil
+caracterizan el trayecto local dentro de la red residencial y no una
+comunicación extremo a extremo hacia Internet. Por otra parte, las
+pruebas realizadas mediante servicios externos también se encuentran
+condicionadas por la conexión WAN, la red del operador y el servidor de
+medida. Estas pruebas permiten comparar el comportamiento observado
+cuando el terminal se encuentra asociado a diferentes nodos, pero no
+aislar completamente el efecto de la red EasyMesh.
+
+Finalmente, la validación experimental se realizó utilizando una única
+topología residencial, tres dispositivos HX141 y un solo terminal móvil.
+Esta configuración permite demostrar el funcionamiento de la
+arquitectura y reproducir los escenarios definidos, pero limita la
+generalización de los resultados a otros fabricantes, versiones de
+firmware, modelos de terminal, distribuciones físicas o estrategias de
+movilidad.
+
+Las limitaciones identificadas no invalidan la plataforma desarrollada,
+sino que delimitan el significado de las métricas y de los resultados
+obtenidos. Asimismo, permiten diferenciar entre los indicadores
+directamente observables, los valores que requieren interpretación
+adicional y las funcionalidades que pueden abordarse como futuras
+ampliaciones del laboratorio.
+
+\section{Metodología de trabajo}
+\label{sec:metodologia-trabajo}
+
+El desarrollo del proyecto se llevó a cabo mediante una metodología
+iterativa e incremental. Este enfoque permitió dividir el trabajo en
+fases sucesivas, validar progresivamente los componentes de la solución y
+realizar los ajustes necesarios a medida que se incorporaban nuevos
+elementos al laboratorio. La metodología combinó actividades de estudio,
+diseño, implementación y validación experimental.
+
+En una primera fase se realizó una revisión de los fundamentos técnicos
+necesarios para delimitar el problema y establecer los requisitos de la
+solución. El estudio comprendió las redes Wi-Fi Mesh, la arquitectura
+EasyMesh, el estándar IEEE~1905.1, los mecanismos de gestión remota
+TR-069/CWMP, el modelo de datos TR-181 y los conceptos de calidad de
+servicio y calidad de experiencia.
+
+A partir de este análisis se definió un catálogo inicial de métricas e
+indicadores orientados a caracterizar el estado de la red y la experiencia
+del cliente. Para cada indicador se consideraron su significado, la
+fuente de información, la unidad, el procedimiento de adquisición, la
+periodicidad prevista y su utilidad dentro del proceso de diagnóstico.
+Esta clasificación permitió diferenciar entre parámetros obtenidos
+directamente de los dispositivos, indicadores derivados mediante
+procesamiento y medidas activas ejecutadas durante las pruebas.
+
+La segunda fase consistió en el diseño de la arquitectura del laboratorio
+y en la selección de los componentes necesarios para implementar el flujo
+de monitorización. Los servicios se desplegaron mediante contenedores
+Docker con el objetivo de facilitar la reproducibilidad del entorno, el
+aislamiento entre componentes y la posterior ampliación de la solución.
+La infraestructura integró herramientas de gestión remota, almacenamiento,
+adquisición de métricas, visualización y captura de tráfico.
+
+Posteriormente, se desarrolló una fase de validación simulada. En ella se
+utilizó un CPE virtual para reproducir de forma controlada el intercambio
+de información mediante TR-069/CWMP y generar estructuras de datos
+equivalentes a las disponibles en una red EasyMesh. Esta etapa permitió
+comprobar el funcionamiento de la arquitectura antes de incorporar los
+dispositivos físicos y facilitó la detección temprana de errores en el
+flujo de adquisición y tratamiento de la información.
+
+Durante la fase simulada se verificaron la recepción de parámetros en
+GenieACS, la transformación de la telemetría en métricas, su
+almacenamiento temporal y su representación en Grafana. También se
+generaron evidencias estructuradas que permitieron comprobar la
+repetibilidad de los escenarios y conservar la trazabilidad de los
+resultados obtenidos.
+
+Una vez validada la infraestructura básica, se procedió al despliegue del
+laboratorio físico. La red experimental se configuró mediante tres
+dispositivos TP-Link HX141, de los cuales uno desempeñó la función de
+controlador EasyMesh y los otros dos actuaron como agentes. Los equipos
+se distribuyeron en diferentes plantas de una vivienda para reproducir un
+escenario residencial con cobertura mallada y enlaces de
+\textit{backhaul} inalámbrico.
+
+La siguiente fase estuvo dedicada a la integración de los dispositivos
+reales con la plataforma de gestión. El controlador se registró en
+GenieACS mediante TR-069/CWMP y se analizó el modelo de datos expuesto por
+el firmware. Este análisis permitió identificar los parámetros
+relacionados con las radios, los puntos de acceso, los clientes asociados
+y la topología EasyMesh, así como evaluar su disponibilidad y frecuencia
+de actualización.
+
+La información almacenada en GenieACS se consultó mediante su API NBI. A
+partir de estas consultas se implementó un \textit{exporter} encargado de
+normalizar los parámetros y transformarlos en métricas compatibles con
+Prometheus. Las series temporales se organizaron mediante etiquetas
+estables que permitieran conservar la identidad del cliente y de los
+nodos a lo largo de las diferentes observaciones.
+
+Prometheus se utilizó para la adquisición y almacenamiento temporal de
+las métricas, mientras que Grafana se empleó para construir cuadros de
+mandos orientados al análisis de la asociación del cliente, la calidad
+radio, la capacidad de enlace, la conectividad y la antigüedad de la
+telemetría. Tanto las consultas como los paneles se ajustaron de forma
+iterativa a partir de los resultados obtenidos durante la validación.
+
+La fase experimental se estructuró en escenarios de prueba reproducibles.
+En primer lugar, se realizaron medidas estacionarias con el terminal
+móvil asociado de forma sucesiva al controlador, al primer agente y al
+segundo agente. Estas pruebas permitieron comparar el comportamiento de
+la plataforma cuando el cliente era atendido por diferentes nodos de la
+red.
+
+Posteriormente, se ejecutó una prueba de movilidad siguiendo la secuencia:
+
+\[
+    \text{Controlador}
+    \longrightarrow
+    \text{Agente 1}
+    \longrightarrow
+    \text{Agente 2}.
+\]
+
+Durante este recorrido se observaron los cambios de asociación y la
+evolución temporal de los indicadores disponibles. El objetivo fue
+comprobar si la plataforma permitía mantener la identidad y la
+trazabilidad del cliente durante los procesos de movilidad entre los
+diferentes puntos de acceso.
+
+La validación se complementó mediante medidas activas de conectividad y
+calidad de experiencia. Estas pruebas permitieron obtener indicadores de
+caudal, latencia, \textit{jitter} y pérdida de paquetes, y relacionarlos
+con la información técnica recogida por la plataforma. Los resultados se
+compararon entre los diferentes puntos de asociación, manteniendo un
+procedimiento común para todos los escenarios.
+
+Cada prueba generó evidencias estructuradas en forma de archivos CSV,
+JSON y TXT, capturas PCAP, imágenes y grabaciones. Estas evidencias
+permitieron verificar los resultados, documentar las condiciones de cada
+escenario y conservar información reproducible para el análisis
+posterior.
+
+La Figura~\ref{fig:metodologia-trabajo} resume las principales fases
+seguidas durante el desarrollo del proyecto, desde el estudio inicial
+hasta la validación de la solución sobre una red EasyMesh real.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[
+        width=0.90\textwidth,
+        keepaspectratio
+    ]{diagrama_de_metodologia_de_trabajo.png}
+    \caption{Metodología de trabajo seguida para el diseño,
+    implementación y validación de la plataforma de monitorización
+    EasyMesh.}
+    \label{fig:metodologia-trabajo}
+\end{figure}
+
+Como se observa en la Figura~\ref{fig:metodologia-trabajo}, el proceso se
+estructuró en fases sucesivas, cada una de las cuales proporcionó
+resultados verificables antes de avanzar a la siguiente. Esta metodología
+facilitó la transición desde una validación controlada mediante
+simulación hasta una implementación funcional sobre dispositivos
+EasyMesh reales, manteniendo la trazabilidad de las decisiones de diseño
+y de las evidencias experimentales
+
+\section{Estructura de la memoria}
+\label{sec:estructura-memoria}
+
+La presente memoria se organiza en doce capítulos, además de la
+bibliografía y los anexos técnicos. La estructura adoptada sigue una
+progresión desde la presentación del problema y sus fundamentos teóricos
+hasta el diseño, implementación y validación experimental de la solución
+desarrollada.
+
+El presente capítulo introduce el contexto y la motivación del proyecto,
+plantea el problema de visibilidad existente en las redes EasyMesh y
+establece los objetivos, el alcance, las limitaciones y la metodología de
+trabajo seguida.
+
+El Capítulo~2 presenta los fundamentos teóricos necesarios para
+comprender el proyecto. En él se describen las redes WiFi residenciales,
+las arquitecturas WiFi Mesh, EasyMesh, IEEE~1905.1, el modelo de datos
+TR-181, el protocolo TR-069/CWMP, el mecanismo BulkData, los indicadores
+de calidad de servicio y experiencia, y los principios de observabilidad
+de red.
+
+El Capítulo~3 describe las herramientas utilizadas para construir el
+laboratorio. Se presentan Docker y Docker Compose, el simulador EasyMesh,
+GenieACS, \texttt{tr069-sim}, MongoDB, Redis, Prometheus, Grafana,
+\texttt{tcpdump}, Wireshark y las utilidades empleadas para la
+automatización, captura y gestión del entorno.
+
+El Capítulo~4 desarrolla el análisis del problema de visibilidad y
+establece los requisitos funcionales y no funcionales de la solución.
+Asimismo, define el catálogo inicial de métricas e indicadores y los
+criterios utilizados para validar el funcionamiento de la plataforma.
+
+El Capítulo~5 presenta la arquitectura funcional del laboratorio y
+describe los diferentes planos que intervienen en la adquisición,
+procesamiento, almacenamiento, visualización y conservación de la
+telemetría. También se detallan las arquitecturas correspondientes a la
+fase simulada y a la fase real, así como la relación existente entre
+ambas.
+
+El Capítulo~6 describe el desarrollo del laboratorio simulado. En él se
+presentan el modelo de red, los nodos y clientes representados, los
+escenarios de funcionamiento y degradación implementados, la generación
+de métricas y las evidencias producidas durante la simulación.
+
+El Capítulo~7 estudia la correspondencia entre la topología EasyMesh y el
+modelo de datos TR-181. Se analizan las ramas utilizadas para representar
+los dispositivos, las radios, los puntos de acceso, los clientes
+asociados y la topología mallada. Además, se presenta el perfil de
+métricas definido y los indicadores derivados utilizados por la
+plataforma.
+
+El Capítulo~8 describe la integración de los dispositivos con GenieACS
+mediante TR-069/CWMP. Se explican el registro del CPE, las sesiones CWMP,
+la consulta y actualización de parámetros, el acceso a la API NBI y la
+captura del tráfico de gestión mediante \texttt{tcpdump} y Wireshark.
+
+El Capítulo~9 presenta el pipeline de observabilidad implementado mediante
+Prometheus y Grafana. Se describen la exposición y adquisición periódica
+de las métricas, su almacenamiento como series temporales, las consultas
+PromQL utilizadas y los cuadros de mando desarrollados para analizar la
+red y el comportamiento del cliente.
+
+El Capítulo~10 recoge la validación de la fase simulada y los resultados
+obtenidos en los diferentes escenarios. En él se comprueba el
+funcionamiento del entorno Docker, el simulador, el modelo de datos, la
+integración con GenieACS, la adquisición mediante Prometheus, la
+representación en Grafana y la generación de evidencias reproducibles.
+
+El Capítulo~11 presenta la implementación y validación del laboratorio
+real mediante tres dispositivos TP-Link HX141 configurados como un
+controlador y dos agentes EasyMesh. En este capítulo se describen la
+topología física, la integración del controlador con GenieACS, la
+adquisición de telemetría real, el pipeline de monitorización y los
+cuadros de mando empleados. También se desarrollan las pruebas
+estacionarias, el escenario de movilidad y \textit{roaming}, las medidas
+de conectividad y las pruebas de calidad de experiencia realizadas desde
+el terminal móvil.
+
+El Capítulo~12 expone las conclusiones generales del proyecto y analiza
+el grado de cumplimiento del objetivo general y de los objetivos
+específicos. Asimismo, recoge las principales aportaciones de la
+plataforma, las limitaciones identificadas durante el desarrollo y las
+posibles líneas de ampliación y trabajo futuro.
+
+Finalmente, los anexos reúnen la información técnica complementaria
+necesaria para reproducir y verificar el trabajo realizado. En ellos se
+incluyen los procedimientos de instalación y puesta en marcha, los
+archivos de configuración, los scripts desarrollados, las consultas y
+cuadros de mando, las capturas de tráfico y las evidencias generadas
+durante las pruebas.
